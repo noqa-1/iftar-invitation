@@ -730,50 +730,43 @@ stampContainer.addEventListener('click', handleCrack);
 render();
 
 // ══════════════════════════════════════════════════════════════
-// AUDIO — starts on first user interaction (browser policy)
+// AUDIO — must be triggered synchronously inside a user gesture
 // ══════════════════════════════════════════════════════════════
-(function initAudio() {
-  const music   = document.getElementById('bg-music');
-  const muteBtn = document.getElementById('mute-btn');
-  let started   = false;
+const bgMusic   = document.getElementById('bg-music');
+const muteBtn   = document.getElementById('mute-btn');
+let musicStarted = false;
 
-  // Browsers block autoplay until the user has interacted with the page.
-  // We start on the very first click/touch anywhere on the document.
-  function startMusic() {
-    if (started) return;
-    started = true;
-    music.volume = 0;
-    music.play().then(() => {
-      // Fade in smoothly over ~1.5 s
-      let vol = 0;
-      const tick = setInterval(() => {
-        vol = Math.min(vol + 0.04, 1);
-        music.volume = vol;
-        if (vol >= 1) clearInterval(tick);
-      }, 60);
-    }).catch(() => {
-      // Autoplay still blocked — silently ignore; mute btn still works
-    });
-    document.removeEventListener('click',     startMusic);
-    document.removeEventListener('touchstart', startMusic);
-  }
-
-  document.addEventListener('click',     startMusic);
-  document.addEventListener('touchstart', startMusic, { passive: true });
-
-  // Mute / unmute toggle
-  muteBtn.addEventListener('click', (e) => {
-    e.stopPropagation(); // don't count as "crack" click on stamp
-    if (music.muted) {
-      music.muted = false;
-      muteBtn.textContent = '♪';
-      muteBtn.classList.remove('muted');
-    } else {
-      music.muted = true;
-      muteBtn.textContent = '♪';
-      muteBtn.classList.add('muted');
-    }
-    // If music hasn't started yet, clicking mute should still start it
-    startMusic();
+function tryStartMusic() {
+  if (musicStarted) return;
+  musicStarted = true;
+  bgMusic.volume = 0;
+  bgMusic.play().then(() => {
+    // Fade in over ~1.5s
+    let vol = 0;
+    const tick = setInterval(() => {
+      vol = Math.min(vol + 0.04, 1);
+      bgMusic.volume = vol;
+      if (vol >= 1) clearInterval(tick);
+    }, 60);
+  }).catch(() => {
+    // Still blocked — user can tap mute button to retry
+    musicStarted = false;
   });
-})();
+}
+
+// Hook directly into the stamp touch/click so it's synchronous with the gesture
+stampContainer.addEventListener('touchend', tryStartMusic, { passive: true });
+stampContainer.addEventListener('click',    tryStartMusic);
+
+// Fallback: any other tap anywhere on the page
+document.addEventListener('touchend', tryStartMusic, { passive: true });
+document.addEventListener('click',    tryStartMusic);
+
+// Mute / unmute toggle
+muteBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
+  tryStartMusic(); // also starts music if not started yet
+  bgMusic.muted = !bgMusic.muted;
+  muteBtn.textContent = '♪';
+  muteBtn.classList.toggle('muted', bgMusic.muted);
+});

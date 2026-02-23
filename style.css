@@ -96,6 +96,7 @@ html, body {
   z-index: 5;
   pointer-events: none;
   perspective: 1800px;
+  padding: 0 10px;
 }
 
 #envelope {
@@ -492,3 +493,4 @@ html, body {
 @keyframes hintFade {
   to { opacity: 0; }
 }
+

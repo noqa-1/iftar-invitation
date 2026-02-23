@@ -691,15 +691,10 @@ function render() {
   animFrame = requestAnimationFrame(render);
 }
 
-// ── Click handler ─────────────────────────────────────────────
+// ── Click / touch handler ──────────────────────────────────────
 const stampContainer = document.getElementById('stamp-container');
 
-// Suppress Android tap highlight — CSS alone isn't enough on some devices
-stampContainer.addEventListener('touchstart', (e) => {
-  e.preventDefault(); // kills the highlight AND the 300ms delay
-}, { passive: false });
-
-stampContainer.addEventListener('click', () => {
+function handleCrack() {
   if (falling || done) return;
   clickCount++;
   document.getElementById('hint-stamp').style.opacity = '0';
@@ -715,7 +710,21 @@ stampContainer.addEventListener('click', () => {
       fallCanvas.style.display  = 'block';
     }, 120);
   }
-});
+}
+
+// Touch: use touchend so we don't block anything, track if finger moved
+// (to avoid triggering on scroll). No preventDefault needed.
+let touchMoved = false;
+stampContainer.addEventListener('touchstart', () => { touchMoved = false; }, { passive: true });
+stampContainer.addEventListener('touchmove',  () => { touchMoved = true;  }, { passive: true });
+stampContainer.addEventListener('touchend', (e) => {
+  if (touchMoved) return;          // was a scroll, not a tap
+  e.preventDefault();              // prevent the ghost click that follows touchend
+  handleCrack();
+}, { passive: false });
+
+// Mouse click for desktop
+stampContainer.addEventListener('click', handleCrack);
 
 // ── Boot ──────────────────────────────────────────────────────
 render();

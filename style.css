@@ -47,6 +47,7 @@ html, body {
   /* kill the blue tap-highlight rectangle on mobile */
   -webkit-tap-highlight-color: transparent;
   tap-highlight-color: transparent;
+  touch-action: manipulation;
   outline: none;
 }
 

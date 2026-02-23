@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Ramadan Kareem — You're Invited</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════════
+       SCREEN 1 — Stamp + Envelope
+       ════════════════════════════════════════════════════════ -->
+
+  <!-- Envelope (behind stamp) -->
+  <div id="envelope-wrap">
+    <div id="envelope">
+      <div id="env-body"></div>
+      <div id="env-flap">
+        <div id="env-flap-inner"></div>
+      </div>
+      <!-- The rising card — placeholder content, replaced by invitation reveal -->
+      <div id="card">
+        <div id="card-inner"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stamp (on top of envelope) -->
+  <div class="scene">
+    <div id="stamp-container">
+      <canvas id="stamp-canvas" width="260" height="260"></canvas>
+    </div>
+    <div class="hint-stamp" id="hint-stamp">اضغط للكسر</div>
+  </div>
+
+  <!-- Fragment fall canvas -->
+  <canvas id="fall-canvas"></canvas>
+
+  <!-- ════════════════════════════════════════════════════════
+       SCREEN 2 — Invitation (hidden until reveal)
+       ════════════════════════════════════════════════════════ -->
+  <div id="invitation-screen">
+    <div id="stars-bg"></div>
+    <canvas id="rope-canvas"></canvas>
+    <div id="ornaments-layer"></div>
+
+    <div id="invitation">
+      <div class="inv-inner">
+        <div class="corner tl">❖</div>
+        <div class="corner tr">❖</div>
+        <div class="corner bl">❖</div>
+        <div class="corner br">❖</div>
+
+        <p class="inv-sub" dir="rtl">دعوة إفطار</p>
+        <h1 class="inv-title">رمضان كريم</h1>
+
+        <div class="inv-divider">
+          <span class="div-line"></span>
+          <span class="div-gems">✦ ✦ ✦</span>
+          <span class="div-line"></span>
+        </div>
+
+        <p class="inv-body" dir="rtl">
+          يتشرّف قسم هندسة الحاسبات بدعوتكم لحضور مأدبة الإفطار الرمضانية،
+         
+          في أجواءٍ عامرةٍ بالمحبة والأُلفة، راجين من الله تعالى أن يتقبّل منّا ومنكم صالح الأعمال، وأن يديم عليكم نعمه وبركاته
+        </p>
+
+        <div class="inv-details" dir="rtl">
+          <div class="inv-detail-item">
+            <span class="detail-icon"><img src="assets/schedule.png" alt="📅"></span>
+            <span class="detail-value">الثلاثاء  ١٣ / رمضان / ١٤٤٧</span>
+          </div>
+          <div class="inv-detail-item">
+            <span class="detail-icon"><img src="assets/map.png" alt="📍"></span>
+            <span class="detail-value">باحة قسم هندسة الحاسبات</span>
+          </div>
+          <div class="inv-detail-item">
+            <span class="detail-icon"><img src="assets/clock.png" alt="🕐"></span>
+            <span class="detail-value">بعد صلاة المغرب</span>
+          </div>
+        </div>
+
+        <div class="inv-footer">كل عام وأنتم بخير</div>
+      </div>
+    </div>
+
+    <div id="hint-inv">✦ اسحب النجوم , الفوانيس او الاقمار ✦</div>
+  </div>
+
+  <!-- Background music -->
+  <audio id="bg-music" src="assets/A1.mp3" loop preload="auto"></audio>
+
+  <!-- Mute button -->
+  <button id="mute-btn" title="Toggle music">♪</button>
+
+  <script src="script.js"></script>
+</body>
+</html>

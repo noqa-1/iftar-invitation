@@ -647,8 +647,15 @@ function render() {
     drawStamp(ctx, CX, CY, crackPaths, sx, sy);
   } else {
     fctx.clearRect(0, 0, fallCanvas.width, fallCanvas.height);
-    const offsetX = window.innerWidth  / 2 - W / 2;
-    const offsetY = window.innerHeight / 2 - H / 2;
+
+    // Get the actual rendered size of the stamp container (CSS-scaled)
+    // so fragments fall at the same visual size the stamp appeared
+    const containerRect = document.getElementById('stamp-container').getBoundingClientRect();
+    const displaySize   = containerRect.width || W;   // fallback to 260 if hidden
+    const scale         = displaySize / W;             // e.g. 0.67 if container is 174px
+
+    const offsetX = window.innerWidth  / 2;
+    const offsetY = window.innerHeight / 2;
 
     let allGone = true;
     fragments.forEach(f => {
@@ -656,15 +663,20 @@ function render() {
       allGone = false;
       f.vy += f.gravity; f.x += f.vx; f.y += f.vy; f.rotation += f.rotSpeed;
 
-      const screenY = offsetY + f.cy + f.y;
+      // screenY tracks where fragment centre is (in viewport coords)
+      const screenY = offsetY + (f.cy + f.y - CY) * scale;
       if (screenY > window.innerHeight * 0.75) f.opacity -= 0.022;
 
       fctx.save();
       fctx.globalAlpha = Math.max(0, f.opacity);
-      fctx.translate(offsetX + f.cx + f.x, offsetY + f.cy + f.y);
+      // Translate to screen centre + fragment offset (scaled), then rotate around fragment centre
+      fctx.translate(
+        offsetX + (f.cx + f.x - CX) * scale,
+        offsetY + (f.cy + f.y - CY) * scale
+      );
       fctx.rotate(f.rotation);
-      fctx.translate(-f.cx, -f.cy);
-      fctx.drawImage(f.canvas, 0, 0);
+      // Draw the 260×260 fragment canvas scaled down to match visual stamp size
+      fctx.drawImage(f.canvas, -f.cx * scale, -f.cy * scale, W * scale, H * scale);
       fctx.restore();
     });
 
@@ -680,7 +692,14 @@ function render() {
 }
 
 // ── Click handler ─────────────────────────────────────────────
-document.getElementById('stamp-container').addEventListener('click', () => {
+const stampContainer = document.getElementById('stamp-container');
+
+// Suppress Android tap highlight — CSS alone isn't enough on some devices
+stampContainer.addEventListener('touchstart', (e) => {
+  e.preventDefault(); // kills the highlight AND the 300ms delay
+}, { passive: false });
+
+stampContainer.addEventListener('click', () => {
   if (falling || done) return;
   clickCount++;
   document.getElementById('hint-stamp').style.opacity = '0';

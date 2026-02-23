@@ -63,11 +63,11 @@ html, body {
 
 .hint-stamp {
   position: fixed;
-  bottom: 40px;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 38vh - min(37vw, 330px));
   left: 50%;
   transform: translateX(-50%);
   color: rgba(255, 200, 150, 0.5);
-  font-size: 17px;
+  font-size: 21px;
   letter-spacing: 2px;
   text-transform: uppercase;
   pointer-events: none;
@@ -75,6 +75,7 @@ html, body {
   z-index: 20;
   font-family: 'Georgia', serif;
 }
+
 
 /* ── Fall canvas ──────────────────────────────────────────── */
 #fall-canvas {
@@ -493,4 +494,5 @@ html, body {
 @keyframes hintFade {
   to { opacity: 0; }
 }
+
 
